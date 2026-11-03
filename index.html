@@ -132,5 +132,19 @@ signInAnonymously(auth)
     console.error("Firebase connection error:", error);
   });
     </script>
+<script>
+const TV_SYNC_URL = "https://smarttv.jaulistinesweets.workers.dev/state";
+
+async function getTVPlaybackState() {
+  try {
+    const response = await fetch(TV_SYNC_URL);
+    if (!response.ok) throw new Error("Sync unavailable");
+    return await response.json();
+  } catch (error) {
+    console.error("TV sync error:", error);
+    return null;
+  }
+}
+</script>
 </body>
 </html>
