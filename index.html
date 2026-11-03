@@ -149,36 +149,30 @@ async function getTVPlaybackState() {
 
 async function syncTV() {
   const state = await getTVPlaybackState();
+
   const status = document.getElementById("syncStatus");
+  const title = document.getElementById("currentTitle");
+  const position = document.getElementById("currentPosition");
+  const room = document.getElementById("roomStatus");
 
   if (!state) {
     if (status) status.textContent = "Unable to connect to TV sync.";
     return;
   }
 
-  if (status) {
-    status.textContent =
-      state.service
-        ? "Connected • " + state.service + " • " + state.status
-        : "Connected • Waiting for the TV owner to start playback.";
-  }
+  if (title) title.textContent =
+    state.service || "Nothing playing";
+
+  if (position) position.textContent =
+    Math.floor(state.position / 60) + ":" +
+    String(state.position % 60).padStart(2, "0");
+
+  if (room) room.textContent = "Connected";
+
+  if (status) status.textContent =
+    "Connected • " + (state.service || "Waiting") +
+    " • " + state.status;
 }
-
-document.getElementById("joinPlaying")?.addEventListener("click", syncTV);
-
-document.getElementById("manualSync")?.addEventListener("click", syncTV);
-
-document.getElementById("autoSync")?.addEventListener("click", function () {
-  if (autoSyncTimer) {
-    clearInterval(autoSyncTimer);
-    autoSyncTimer = null;
-    this.textContent = "🌸 Auto Sync";
-  } else {
-    syncTV();
-    autoSyncTimer = setInterval(syncTV, 5000);
-    this.textContent = "🌸 Auto Sync ON";
-  }
-});
 </script>
 </body>
 </html>
