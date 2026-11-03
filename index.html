@@ -105,6 +105,7 @@ const onButton=document.getElementById("powerOn");
 offButton.addEventListener("click",()=>{document.body.classList.add("off");document.title="Jaulistine Smart TV — Off";});
 onButton.addEventListener("click",()=>{document.body.classList.remove("off");document.title="Jaulistine Smart TV";});
 </script>
+  <script type="module">
   const firebaseConfig = {
     apiKey: "AIzaSyBFCPmqIltr83fAZ6jBgvg5tAWqd2EDy2g",
     authDomain: "jaulistinesmarttv.firebaseapp.com",
@@ -114,5 +115,22 @@ onButton.addEventListener("click",()=>{document.body.classList.remove("off");doc
     messagingSenderId: "726081617990",
     appId: "1:726081617990:web:5d8804f1f04816bad1ca47"
   };
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getDatabase } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const database = getDatabase(app);
+
+signInAnonymously(auth)
+  .then(() => {
+    const status = document.getElementById("syncStatus");
+    if (status) status.textContent = "Connected to Firebase!";
+  })
+  .catch((error) => {
+    console.error("Firebase connection error:", error);
+  });
+    </script>
 </body>
 </html>
