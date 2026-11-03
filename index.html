@@ -132,8 +132,11 @@ signInAnonymously(auth)
     console.error("Firebase connection error:", error);
   });
     </script>
+
 <script>
 const TV_SYNC_URL = "https://smarttv.jaulistinesweets.workers.dev/state";
+
+let autoSyncTimer = null;
 
 async function getTVPlaybackState() {
   try {
@@ -145,7 +148,6 @@ async function getTVPlaybackState() {
     return null;
   }
 }
-  let autoSyncTimer = null;
 
 async function syncTV() {
   const state = await getTVPlaybackState();
@@ -160,19 +162,41 @@ async function syncTV() {
     return;
   }
 
-  if (title) title.textContent =
-    state.service || "Nothing playing";
+  if (title) title.textContent = state.service || "Nothing playing";
 
-  if (position) position.textContent =
-    Math.floor(state.position / 60) + ":" +
-    String(state.position % 60).padStart(2, "0");
+  if (position) {
+    const seconds = Math.floor(state.position || 0);
+    position.textContent =
+      Math.floor(seconds / 60) + ":" +
+      String(seconds % 60).padStart(2, "0");
+  }
 
   if (room) room.textContent = "Connected";
 
-  if (status) status.textContent =
-    "Connected • " + (state.service || "Waiting") +
-    " • " + state.status;
+  if (status) {
+    status.textContent =
+      "Connected • " + (state.service || "Waiting") +
+      " • " + state.status;
+  }
 }
+
+document.getElementById("joinPlaying").addEventListener("click", syncTV);
+
+document.getElementById("manualSync").addEventListener("click", syncTV);
+
+document.getElementById("autoSync").addEventListener("click", function () {
+  if (autoSyncTimer) {
+    clearInterval(autoSyncTimer);
+    autoSyncTimer = null;
+    this.textContent = "🌸 Auto Sync";
+  } else {
+    syncTV();
+    autoSyncTimer = setInterval(syncTV, 5000);
+    this.textContent = "🌸 Auto Sync ON";
+  }
+});
+</script>
+
 </script>
 </body>
 </html>
